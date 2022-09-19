@@ -1,20 +1,56 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+// App Imports
+import HomePage from "./screens/HomePage";
+
+// Auth Screen Imports
+import LandingPage from "./screens/LandingPage";
+import Register from "./screens/Register";
+import Login from "./screens/Login";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
+  console.disableYellowBox = true;
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="LandingPage"
+          component={LandingPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={Register}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="AuthenticatedStack"
+          component={AuthenticatedStack}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function AuthenticatedStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={HomePage}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+}
