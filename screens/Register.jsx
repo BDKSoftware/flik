@@ -31,6 +31,7 @@ export default function LandingPage({ navigation }) {
           alert("The password is too weak.");
         } else {
           alert(errorMessage);
+          console.log(errorMessage);
         }
       });
   };

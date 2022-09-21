@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { LogBox } from "react-native";
 
 // App Imports
 import HomePage from "./screens/HomePage";
@@ -10,11 +11,11 @@ import LandingPage from "./screens/LandingPage";
 import Register from "./screens/Register";
 import Login from "./screens/Login";
 
+console.disableYellowBox = true;
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  console.disableYellowBox = true;
-
   return (
     <NavigationContainer>
       <Stack.Navigator>

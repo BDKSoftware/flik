@@ -27,21 +27,21 @@ export default function LandingPage({ navigation }) {
           source={require("../assets/Triangle.png")}
           style={styles.triangleLeft}
           animation="pulse"
-          duration={"1000"}
+          duration={1000}
           direction={"reverse"}
         />
         <Animatable.Image
           source={require("../assets/Triangle.png")}
           style={styles.triangleMid}
           animation="pulse"
-          duration={"1000"}
+          duration={1000}
           direction={"reverse"}
         />
         <Animatable.Image
           source={require("../assets/Triangle.png")}
           style={styles.triangleRight}
           animation="pulse"
-          duration={"1000"}
+          duration={1000}
           direction={"reverse"}
         />
       </View>

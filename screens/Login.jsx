@@ -20,11 +20,11 @@ export default function LoginPage({ navigation }) {
         const user = userCreds.user;
         navigation.navigate("AuthenticatedStack", {
           screen: "Home",
-          params: { user },
         });
       })
       .catch((error) => {
         console.log(error);
+        alert(error);
       });
   };
 
