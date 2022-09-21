@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
+import * as Animatable from "react-native-animatable";
 
 export default function LandingPage({ navigation }) {
   const handleNavigateToRegister = () => {
@@ -15,17 +23,26 @@ export default function LandingPage({ navigation }) {
         <Text style={styles.title}>flik</Text>
       </View>
       <View style={styles.triangleContainer}>
-        <Image
+        <Animatable.Image
           source={require("../assets/Triangle.png")}
           style={styles.triangleLeft}
+          animation="pulse"
+          duration={"1000"}
+          direction={"reverse"}
         />
-        <Image
+        <Animatable.Image
           source={require("../assets/Triangle.png")}
           style={styles.triangleMid}
+          animation="pulse"
+          duration={"1000"}
+          direction={"reverse"}
         />
-        <Image
+        <Animatable.Image
           source={require("../assets/Triangle.png")}
           style={styles.triangleRight}
+          animation="pulse"
+          duration={"1000"}
+          direction={"reverse"}
         />
       </View>
       <View style={styles.buttonContainer}>
@@ -72,7 +89,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "60%",
     position: "absolute",
-    bottom: 0,
+    bottom: -20,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -80,18 +97,18 @@ const styles = StyleSheet.create({
 
   triangleLeft: {
     position: "absolute",
-    bottom: 0,
+    bottom: -20,
     right: -100,
   },
 
   triangleMid: {
     position: "absolute",
-    bottom: 0,
+    bottom: -20,
   },
 
   triangleRight: {
     position: "absolute",
-    bottom: 0,
+    bottom: -20,
     left: -100,
   },
 

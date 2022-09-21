@@ -43,3 +43,9 @@ export function addDisplayName(user, displayName) {
     displayName: displayName,
   });
 }
+
+// TODO: SaveToAsyncStorage
+// TODO: LOGIN WITH FACEBOOK
+// TODO: LOGIN WITH GOOGLE
+// TODO: SIGNUP WITH FACEBOOK
+// TODO SIGNUP WITH GOOGLE

@@ -4,6 +4,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState } from "react";
@@ -13,7 +14,6 @@ export default function LandingPage({ navigation }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
 
   const handleRegister = async () => {
     await signUp(email, password)
@@ -69,15 +69,27 @@ export default function LandingPage({ navigation }) {
               value={password}
               placeholder={"password"}
               onChangeText={setPassword}
-              secureTextEntry={true}
+              // secureTextEntry={true}
             />
-            <TextInput
-              style={styles.formInput}
-              value={confirm}
-              placeholder={"confirm password"}
-              onChangeText={setConfirm}
-              secureTextEntry={true}
-            />
+          </View>
+          <View style={styles.lineContainer}>
+            <View style={styles.line}></View>
+            <Text style={styles.lineText}>or</Text>
+            <View style={styles.line}></View>
+          </View>
+          <View style={styles.socialContainer}>
+            <TouchableOpacity>
+              <Image
+                source={require("../assets/facebook.png")}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image
+                source={require("../assets/google.png")}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -107,7 +119,7 @@ const styles = StyleSheet.create({
   },
 
   topContainer: {
-    height: "25%",
+    height: "20%",
     width: "100%",
     flex: 1,
     alignItems: "center",
@@ -121,7 +133,7 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    height: "75%",
+    height: "80%",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -129,9 +141,9 @@ const styles = StyleSheet.create({
 
   formContainer: {
     width: "80%",
-    height: "75%",
+    height: "60%",
     borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "#ffffff",
   },
 
   formtitleContainer: {
@@ -144,29 +156,33 @@ const styles = StyleSheet.create({
   formtitle: {
     fontSize: "20px",
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: "#7804fc",
   },
 
   inputContainer: {
-    height: "80%",
+    height: "50%",
     width: "100%",
     alignItems: "center",
     justifyContent: "space-evenly",
   },
 
   formInput: {
-    height: "10%",
+    height: "20%",
     width: "80%",
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     paddingLeft: 10,
     marginBottom: 30,
+    shadowColor: "black",
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.3,
   },
 
   buttonContainer: {
     width: "100%",
     height: "25%",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
 
   button: {
@@ -189,5 +205,38 @@ const styles = StyleSheet.create({
     fontSize: "12px",
     color: "#FFFFFF",
     fontWeight: "400",
+  },
+
+  lineContainer: {
+    width: "100%",
+    height: "10%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  line: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#7804fc",
+    width: "40%",
+    marginHorizontal: 10,
+  },
+
+  lineText: {
+    color: "#7804fc",
+  },
+
+  socialContainer: {
+    width: "100%",
+    height: "20%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  icon: {
+    height: 50,
+    width: 50,
+    marginHorizontal: 25,
   },
 });
