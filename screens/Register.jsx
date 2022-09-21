@@ -14,6 +14,26 @@ export default function LandingPage({ navigation }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isShowing, setIsShowing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleFirebaseError = (error) => {
+    switch (error) {
+      case "auth/email-already-in-use":
+        setErrorMessage("Email already in use");
+        break;
+      case "auth/invalid-email":
+        setErrorMessage("Invalid email address");
+        break;
+      case "auth/weak-password":
+        setErrorMessage("Password must be at least 6 characters");
+        break;
+      default:
+        setErrorMessage("Unknown error");
+        break;
+    }
+    setIsShowing(true);
+  };
 
   const handleRegister = async () => {
     await signUp(email, password)
@@ -24,15 +44,7 @@ export default function LandingPage({ navigation }) {
         alert("Successfully registered!");
       })
       .catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        if (errorCode == "auth/weak-password") {
-          alert("The password is too weak.");
-        } else {
-          alert(errorMessage);
-          console.log(errorMessage);
-        }
+        handleFirebaseError(error.code);
       });
   };
 
@@ -43,6 +55,13 @@ export default function LandingPage({ navigation }) {
       resetScrollToCoords={{ x: 0, y: 0 }}
       scrollEnabled={false}
     >
+      <ErrorModal
+        isShowing={isShowing}
+        setIsShowing={setIsShowing}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+
       <View style={styles.topContainer}>
         <Text style={styles.title}>flik</Text>
       </View>

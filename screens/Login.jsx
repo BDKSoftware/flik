@@ -9,10 +9,34 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState } from "react";
 import { login } from "../firebase";
+import ErrorModal from "../modals/ErrorModal";
 
 export default function LoginPage({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isShowing, setIsShowing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleFirebaseError = (error) => {
+    switch (error) {
+      case "auth/invalid-email":
+        setErrorMessage("Invalid email address");
+        break;
+      case "auth/user-disabled":
+        setErrorMessage("User disabled");
+        break;
+      case "auth/user-not-found":
+        setErrorMessage("User not found");
+        break;
+      case "auth/wrong-password":
+        setErrorMessage("Wrong password");
+        break;
+      default:
+        setErrorMessage("Unknown error");
+        break;
+    }
+    setIsShowing(true);
+  };
 
   const handleLogin = async () => {
     return await login(email, password)
@@ -23,8 +47,7 @@ export default function LoginPage({ navigation }) {
         });
       })
       .catch((error) => {
-        console.log(error);
-        alert(error);
+        handleFirebaseError(error.code);
       });
   };
 
@@ -35,6 +58,13 @@ export default function LoginPage({ navigation }) {
       resetScrollToCoords={{ x: 0, y: 0 }}
       scrollEnabled={false}
     >
+      <ErrorModal
+        isShowing={isShowing}
+        setIsShowing={setIsShowing}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+
       <View style={styles.topContainer}>
         <Text style={styles.title}>flik</Text>
       </View>
