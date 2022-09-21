@@ -9,6 +9,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState } from "react";
 import { addDisplayName, signUp } from "../firebase";
+import ErrorModal from "../modals/ErrorModal";
 
 export default function LandingPage({ navigation }) {
   const [username, setUsername] = useState("");
