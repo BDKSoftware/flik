@@ -1,4 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // App Imports
 import HomePage from "./screens/HomePage";
@@ -10,17 +12,24 @@ import Login from "./screens/Login";
 
 const Stack = createNativeStackNavigator();
 
-export const AppStack = () => {
+const Tab = createBottomTabNavigator();
+
+export function AppStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Home Screen"
-        component={HomePage}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarActiveTintColor: "grey",
+          tabBarInactiveTintColor: "white",
+        }}
+      >
+        <Tab.Screen name="home" component={HomePage} />
+        <Tab.Screen name="post" component={SettingsScreen} />
+        <Tab.Screen name="explore" component={SettingsScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
-};
+}
 
 export const AuthStack = () => {
   return (
