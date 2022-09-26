@@ -87,12 +87,7 @@ const PostPage = () => {
   };
 
   return (
-    <KeyboardAwareScrollView
-      behavior="padding"
-      contentContainerStyle={styles.container}
-      resetScrollToCoords={{ x: 0, y: 0 }}
-      scrollEnabled={false}
-    >
+    <View style={styles.container}>
       <View style={styles.topbarContainer}>
         <TopBar />
       </View>
@@ -103,11 +98,26 @@ const PostPage = () => {
         <Image source={{ uri: image }} style={styles.image} />
       </View>
       <View style={styles.formContaienr}>
-        <TextInput style={styles.input} placeholder="give your NFT a name" />
-        <TextInput
-          style={styles.input}
-          placeholder="set listing price in SOL"
-        />
+        <KeyboardAwareScrollView
+          behavior="padding"
+          resetScrollToCoords={{ x: 0, y: 0 }}
+          scrollEnabled={false}
+          contentContainerStyle={{
+            alignSelf: "center",
+            alignItems: "center",
+            justifyContent: "space-around",
+            width: "100%",
+            height: "90%",
+            marginTop: 5,
+          }}
+          style={styles.form}
+        >
+          <TextInput style={styles.input} placeholder="give your NFT a name" />
+          <TextInput
+            style={styles.input}
+            placeholder="set listing price in SOL"
+          />
+        </KeyboardAwareScrollView>
         <View style={styles.dropdownContainer}>
           <DropDownPicker
             style={styles.dropdown}
@@ -135,7 +145,7 @@ const PostPage = () => {
           <Text style={styles.buttonText}>Upload Image</Text>
         </TouchableOpacity>
       )}
-    </KeyboardAwareScrollView>
+    </View>
   );
 };
 
@@ -183,13 +193,19 @@ const styles = StyleSheet.create({
     height: "25%",
     alignItems: "center",
     justifyContent: "space-evenly",
+    borderColor: "black",
+  },
+
+  form: {
+    width: "100%",
+    height: "100%",
   },
 
   input: {
     alignSelf: "center",
     borderColor: "trasparent",
     width: "90%",
-    height: "25%",
+    height: "40%",
     backgroundColor: "#fff",
     padding: 10,
     borderRadius: 10,
@@ -234,6 +250,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
+    marginTop: 10,
   },
 
   buttonText: {
