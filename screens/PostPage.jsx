@@ -6,9 +6,8 @@ import {
   Image,
   TouchableOpacity,
   ActionSheetIOS,
-  KeyboardAvoidingViewBase,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 
 import TopBar from "../components/TopBar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -20,9 +19,9 @@ import * as ImagePicker from "expo-image-picker";
 const PostPage = () => {
   const [image, setImage] = React.useState(null);
 
-  const [category, setCategory] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
-  const [items, setItems] = React.useState([
+  const [category, setCategory] = React.useState("");
+
+  let items = [
     { id: "0", title: "Food" },
     { id: "1", title: "Clothing" },
     { id: "2", title: "Furniture" },
@@ -33,7 +32,7 @@ const PostPage = () => {
     { id: "7", title: "Sports" },
     { id: "8", title: "Electronics" },
     { id: "9", title: "Other" },
-  ]);
+  ];
 
   // Open and Close Modal
   const handleActionSheet = () => {
@@ -92,6 +91,10 @@ const PostPage = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("Category: " + category);
+  }, [category]);
+
   return (
     <KeyboardAwareScrollView
       style={styles.container}
@@ -110,27 +113,32 @@ const PostPage = () => {
         <TextInput style={styles.input} placeholder="give your NFT a name" />
         <TextInput
           style={styles.input}
-          placeholder="set listing price in SOL"
+          placeholder="set listing price in FLIKC"
         />
         <View style={styles.dropdownContainer}>
           <AutocompleteDropdown
             clearOnFocus={false}
             closeOnBlur={true}
-            closeOnSubmit={false} // or just '2'
+            closeOnSubmit={false}
             onSelectItem={setCategory}
             dataSet={items}
             containerStyle={{ width: "100%" }}
             direction="up"
             textInputProps={{
               placeholder: "set category",
+
               style: {
                 backgroundColor: "white",
                 color: "black",
                 borderRadius: 10,
               },
             }}
-            showChevron={false}
-            showClear={false}
+            suggestionsListContainerStyle={{
+              backgroundColor: "white",
+              borderRadius: 10,
+            }}
+            rightButtonsContainerStyle={{ backgroundColor: "white" }}
+            inputContainerStyle={{ backgroundColor: "white" }}
           />
         </View>
       </View>
