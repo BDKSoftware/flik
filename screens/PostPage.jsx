@@ -16,10 +16,16 @@ import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 // Expo Import
 import * as ImagePicker from "expo-image-picker";
 
+//Import modals
+import ErrorNFTModal from "../modals/ErrorNFTModal";
+import SuccessModal from "../modals/SuccessModal";
+
 const PostPage = () => {
   const [image, setImage] = React.useState(null);
 
   const [category, setCategory] = React.useState("");
+  const [showSuccessModal, setShowSuccessModal] = React.useState(true);
+  const [showErrorModal, setShowErrorModal] = React.useState(false);
 
   let items = [
     { id: "0", title: "Food" },
@@ -100,6 +106,14 @@ const PostPage = () => {
       style={styles.container}
       contentContainerStyle={styles.container}
     >
+      <SuccessModal
+        isShowing={showSuccessModal}
+        setIsShowing={setShowSuccessModal}
+      />
+      <ErrorNFTModal
+        isShowing={showErrorModal}
+        setIsShowing={setShowErrorModal}
+      />
       <View style={styles.topbarContainer}>
         <TopBar />
       </View>
