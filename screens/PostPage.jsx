@@ -6,12 +6,13 @@ import {
   Image,
   TouchableOpacity,
   ActionSheetIOS,
+  KeyboardAvoidingViewBase,
 } from "react-native";
 import React from "react";
 
 import TopBar from "../components/TopBar";
-import DropDownPicker from "react-native-dropdown-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 
 // Expo Import
 import * as ImagePicker from "expo-image-picker";
@@ -22,11 +23,16 @@ const PostPage = () => {
   const [category, setCategory] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [items, setItems] = React.useState([
-    { label: "Food", value: "food" },
-    { label: "Clothing", value: "clothing" },
-    { label: "Furniture", value: "furniture" },
-    { label: "Electronics", value: "electronics" },
-    { label: "Other", value: "other" },
+    { id: "0", title: "Food" },
+    { id: "1", title: "Clothing" },
+    { id: "2", title: "Furniture" },
+    { id: "3", title: "Games" },
+    { id: "4", title: "Friends" },
+    { id: "5", title: "Nature" },
+    { id: "6", title: "Technology" },
+    { id: "7", title: "Sports" },
+    { id: "8", title: "Electronics" },
+    { id: "9", title: "Other" },
   ]);
 
   // Open and Close Modal
@@ -87,7 +93,10 @@ const PostPage = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView
+      style={styles.container}
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.topbarContainer}>
         <TopBar />
       </View>
@@ -98,42 +107,31 @@ const PostPage = () => {
         <Image source={{ uri: image }} style={styles.image} />
       </View>
       <View style={styles.formContaienr}>
-        <KeyboardAwareScrollView
-          behavior="padding"
-          resetScrollToCoords={{ x: 0, y: 0 }}
-          scrollEnabled={false}
-          contentContainerStyle={{
-            alignSelf: "center",
-            alignItems: "center",
-            justifyContent: "space-around",
-            width: "100%",
-            height: "90%",
-            marginTop: 5,
-          }}
-          style={styles.form}
-        >
-          <TextInput style={styles.input} placeholder="give your NFT a name" />
-          <TextInput
-            style={styles.input}
-            placeholder="set listing price in SOL"
-          />
-        </KeyboardAwareScrollView>
+        <TextInput style={styles.input} placeholder="give your NFT a name" />
+        <TextInput
+          style={styles.input}
+          placeholder="set listing price in SOL"
+        />
         <View style={styles.dropdownContainer}>
-          <DropDownPicker
-            style={styles.dropdown}
-            open={open}
-            value={category} //genderValue
-            items={items}
-            setOpen={setOpen}
-            setValue={setCategory}
-            setItems={setItems}
-            placeholder="select category"
-            zIndex={3000}
-            zIndexInverse={1000}
+          <AutocompleteDropdown
+            clearOnFocus={false}
+            closeOnBlur={true}
+            closeOnSubmit={false} // or just '2'
+            onSelectItem={setCategory}
+            dataSet={items}
+            containerStyle={{ width: "100%" }}
+            direction="up"
+            textInputProps={{
+              placeholder: "set category",
+              style: {
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: 10,
+              },
+            }}
+            showChevron={false}
+            showClear={false}
           />
-          <TouchableOpacity style={styles.addItem}>
-            <Text style={styles.addItemText}>new</Text>
-          </TouchableOpacity>
         </View>
       </View>
       {!image ? (
@@ -145,7 +143,7 @@ const PostPage = () => {
           <Text style={styles.buttonText}>Upload Image</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -163,7 +161,7 @@ const styles = StyleSheet.create({
 
   titleContaienr: {
     width: "100%",
-    height: "15%",
+    height: "10%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -196,16 +194,11 @@ const styles = StyleSheet.create({
     borderColor: "black",
   },
 
-  form: {
-    width: "100%",
-    height: "100%",
-  },
-
   input: {
     alignSelf: "center",
     borderColor: "trasparent",
     width: "90%",
-    height: "40%",
+    height: "20%",
     backgroundColor: "#fff",
     padding: 10,
     borderRadius: 10,
@@ -213,7 +206,7 @@ const styles = StyleSheet.create({
 
   dropdownContainer: {
     width: "90%",
-    height: "25%",
+    height: "15%",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
