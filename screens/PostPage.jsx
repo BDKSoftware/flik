@@ -137,7 +137,9 @@ const PostPage = () => {
               backgroundColor: "white",
               borderRadius: 10,
             }}
-            rightButtonsContainerStyle={{ backgroundColor: "white" }}
+            rightButtonsContainerStyle={{
+              backgroundColor: "white",
+            }}
             inputContainerStyle={{ backgroundColor: "white" }}
           />
         </View>

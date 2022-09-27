@@ -2,11 +2,23 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 
 import { FontAwesome } from "@expo/vector-icons";
+import SideBarModal from "../modals/SideBarModal";
 
-const TopBar = () => {
+const TopBar = ({ navigation }) => {
+  const [showSidebar, setShowSidebar] = React.useState(false);
+
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <SideBarModal
+        show={showSidebar}
+        setShow={toggleSidebar}
+        navigation={navigation}
+      />
+      <TouchableOpacity onPress={toggleSidebar}>
         <FontAwesome name="bars" size={24} color="black" />
       </TouchableOpacity>
       <View style={{ flexDirection: "row" }}>
