@@ -24,7 +24,7 @@ const PostPage = () => {
   const [image, setImage] = React.useState(null);
 
   const [category, setCategory] = React.useState("");
-  const [showSuccessModal, setShowSuccessModal] = React.useState(true);
+  const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(false);
 
   let items = [

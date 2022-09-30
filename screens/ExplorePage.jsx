@@ -15,12 +15,25 @@ import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import NFTCard from "../components/NFTCard";
+import SearchModal from "../modals/SearchModal";
 
 const ExplorePage = () => {
   const [category, setCategory] = React.useState("fire");
+  const [showSearch, setShowSearch] = React.useState(false);
 
   //Change with API call
-  const [filters, setFilters] = React.useState(null);
+  const [filters, setFilters] = React.useState([
+    "Sports",
+    "Art",
+    "Music",
+    "Fashion",
+    "Gaming",
+    "Food",
+    "Pets",
+    "Travel",
+    "Nature",
+    "Fire",
+  ]);
 
   // SET TO NULL ONCE API IS CALLED
   const [cards, setCards] = React.useState([
@@ -44,6 +57,47 @@ const ExplorePage = () => {
       image:
         "https://i.pinimg.com/originals/cd/0c/13/cd0c13629f217c1ab72c61d0664b3f99.jpg",
     },
+    {
+      id: 3,
+      name: "NFT 3",
+      price: "7111.23",
+      timeSincePost: "12", // set this in minutes on the backend
+      author: "@BradleyKukuk",
+      likes: 12,
+      image:
+        "https://iso.500px.com/wp-content/uploads/2016/03/stock-photo-142984111-1500x1000.jpg",
+    },
+    {
+      id: 4,
+      name: "NFT 4",
+      price: "2.23",
+      timeSincePost: "12", // set this in minutes on the backend
+      author: "@BradleyKukuk",
+      likes: 12,
+      image:
+        "https://webneel.com/daily/sites/default/files/images/daily/08-2018/1-nature-photography-spring-season-mumtazshamsee.jpg",
+    },
+
+    {
+      id: 5,
+      name: "NFT 5",
+      price: "2.23",
+      timeSincePost: "12", // set this in minutes on the backend
+      author: "@BradleyKukuk",
+      likes: 12,
+      image:
+        "https://webneel.com/daily/sites/default/files/images/daily/10-2013/19-nature-photography-forest.jpg",
+    },
+    {
+      id: 6,
+      name: "NFT 6",
+      price: "2.23",
+      timeSincePost: "12", // set this in minutes on the backend
+      author: "@BradleyKukuk",
+      likes: 12,
+      image:
+        "https://webneel.com/daily/sites/default/files/images/daily/10-2013/12-nature-photography-tree-pixelecta.jpg",
+    },
   ]);
 
   const handleSwitchCategory = (category) => {
@@ -54,8 +108,13 @@ const ExplorePage = () => {
     }
   };
 
+  const handleSearchModal = () => {
+    setShowSearch(!showSearch);
+  };
+
   return (
     <View style={styles.container}>
+      <SearchModal isVisible={showSearch} setIsVisible={setShowSearch} />
       <View style={styles.topBarContainer}>
         <TopBar />
       </View>
@@ -87,23 +146,47 @@ const ExplorePage = () => {
       </View>
       <View style={styles.searchContainer}>
         <AntDesign name="search1" size={15} color="9A9A9A" />
-        <TextInput placeholder="search" style={styles.search} />
+        <TouchableOpacity
+          placeholder="search"
+          style={styles.search}
+          onPress={handleSearchModal}
+        />
       </View>
 
       {/* THIS WILL CHANGE SLIGHTLY WHEN API IS DONE */}
-      <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.filter}>
-          <Text style={styles.filterText}>All</Text>
+      <ScrollView
+        style={styles.filterContainer}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          alignItems: "center",
+        }}
+      >
+        <TouchableOpacity
+          style={{ ...styles.filter, backgroundColor: "#7700FF" }}
+        >
+          <Text
+            style={{ ...styles.filterText, color: "white", fontWeight: "bold" }}
+          >
+            All
+          </Text>
         </TouchableOpacity>
-      </View>
+        {filters.map((filter, index) => (
+          <TouchableOpacity style={styles.filter} key={index}>
+            <Text style={styles.filterText}>{filter}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
       <ScrollView
         style={styles.cardsContainer}
         contentContainerStyle={{
           justifyContent: "center",
           alignItems: "center",
         }}
+        persistentScrollbar={false}
         showsVerticalScrollIndicator={true}
-        persistentScrollbar={true}
+        indicatorStyle="black"
+        scroll
       >
         {cards.map((card) => {
           return (
@@ -120,7 +203,7 @@ const ExplorePage = () => {
         })}
       </ScrollView>
       <TouchableOpacity style={styles.button}>
-        <Ionicons name="ios-rocket" size={20} color="white" />
+        <Ionicons name="ios-rocket" size={15} color="white" />
         <Text style={styles.buttonText}>boost</Text>
       </TouchableOpacity>
     </View>
@@ -136,7 +219,7 @@ const styles = StyleSheet.create({
 
   topBarContainer: {
     width: "100%",
-    height: "15%",
+    height: "11%",
   },
 
   titleContainer: {
@@ -213,18 +296,16 @@ const styles = StyleSheet.create({
   filterContainer: {
     alignSelf: "center",
     width: "80%",
-    height: "5%",
-    alignItems: "center",
-    justifyContent: "space-evenly",
+    height: "8%",
     flexDirection: "row",
     marginVertical: 10,
   },
 
   filter: {
-    width: "15%",
-    height: "100%",
+    width: 85,
+    height: 30,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     borderRadius: 8,
     backgroundColor: "white",
     borderColor: "lightgrey",
@@ -233,12 +314,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
+    overflow: "hidden",
+    marginHorizontal: 5,
   },
 
   cardsContainer: {
     alignSelf: "center",
     width: "98%",
-    height: "60%",
+    height: "100%",
   },
 
   button: {
@@ -247,15 +330,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 20,
     backgroundColor: "#7700FF",
   },
 
   buttonText: {
     color: "white",
-    fontSize: 8,
-    fontWeight: "600",
+    fontSize: 6,
+    fontWeight: "bold",
   },
 });
