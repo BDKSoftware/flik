@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Button,
 } from "react-native";
 import React from "react";
 
@@ -146,11 +147,7 @@ const ExplorePage = () => {
       </View>
       <View style={styles.searchContainer}>
         <AntDesign name="search1" size={15} color="9A9A9A" />
-        <TouchableOpacity
-          placeholder="search"
-          style={styles.search}
-          onPress={handleSearchModal}
-        />
+        <TextInput placeholder="search" style={styles.search} />
       </View>
 
       {/* THIS WILL CHANGE SLIGHTLY WHEN API IS DONE */}
@@ -177,6 +174,14 @@ const ExplorePage = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      <View style={styles.searchButtonContainer}>
+        <TouchableOpacity
+          onPress={handleSearchModal}
+          style={styles.searchButton}
+        >
+          <Text style={styles.searchButtonText}>more filters</Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView
         style={styles.cardsContainer}
         contentContainerStyle={{
@@ -188,7 +193,7 @@ const ExplorePage = () => {
         indicatorStyle="black"
         scroll
       >
-        {cards.map((card) => {
+        {cards.map((card, index) => {
           return (
             <NFTCard
               id={card.id}
@@ -198,6 +203,7 @@ const ExplorePage = () => {
               author={card.author}
               likes={card.likes}
               image={card.image}
+              key={index}
             />
           );
         })}
@@ -340,5 +346,30 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 6,
     fontWeight: "bold",
+  },
+
+  searchButtonContainer: {
+    width: "100%",
+    height: "4%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+
+  searchButton: {
+    height: "70%",
+    alignContent: "center",
+    justifyContent: "center",
+    position: "absolute",
+    right: 10,
+    borderRadius: 10,
+    padding: 5,
+    backgroundColor: "#7700FF",
+  },
+
+  searchButtonText: {
+    fontSize: 8,
+    fontWeight: "bold",
+    color: "white",
   },
 });

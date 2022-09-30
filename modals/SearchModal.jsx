@@ -18,82 +18,23 @@ const SearchModal = ({ isVisible, setIsVisible }) => {
 
   return (
     <Modal
-      animationType="slideUp"
-      animationOut={"fadeOut"}
+      animationIn="slideInLeft"
+      animationOut="slideOutRight"
+      animationInTiming={10}
+      animationOutTiming={10}
       transparent={true}
       visible={isVisible}
-      style={{ alignItems: "center", justifyContent: "center" }}
-      hasBackdrop={true}
-      useNativeDriver={true}
-      useNativeDriverForBackdrop={true}
-      backdropTransitionInTiming={0}
-      backdropTransitionOutTiming={0}
-      customBackdrop={
-        <View style={{ flex: 1, backgroundColor: "black", opacity: 0.7 }} />
-      }
-      swipeDirection="down"
+      hasBackdrop={false}
+      swipeDirection={["right"]}
       onSwipeMove={() => setIsVisible(false)}
     >
       <View style={styles.container}>
         <View style={styles.modal}>
-          <View style={styles.tabContainer}>
-            <TouchableOpacity
-              onPress={() => setFilter("All")}
-              style={{
-                ...styles.tab,
-                backgroundColor: filter === "All" ? "#7700FF" : "white",
-              }}
-            >
-              <Text
-                style={{
-                  ...styles.tabText,
-                  color: filter === "All" ? "white" : "black",
-                  fontWeight: filter === "All" ? "700" : "500",
-                }}
-              >
-                All
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setFilter("NFT")}
-              style={{
-                ...styles.tab,
-                backgroundColor: filter === "NFT" ? "#7700FF" : "white",
-              }}
-            >
-              <Text
-                style={{
-                  ...styles.tabText,
-                  color: filter === "NFT" ? "white" : "black",
-                  fontWeight: filter === "NFT" ? "700" : "500",
-                }}
-              >
-                NFTs
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setFilter("Categories")}
-              style={{
-                ...styles.tab,
-                backgroundColor: filter === "Categories" ? "#7700FF" : "white",
-              }}
-            >
-              <Text
-                style={{
-                  ...styles.tabText,
-                  color: filter === "Categories" ? "white" : "black",
-                  fontWeight: filter === "Categories" ? "700" : "500",
-                }}
-              >
-                Categories
-              </Text>
-            </TouchableOpacity>
-          </View>
           <View style={styles.searchContainer}>
             <AntDesign name="search1" size={15} color="9A9A9A" />
             <TextInput placeholder="search" style={styles.search} />
           </View>
-          <Text style={styles.bottomText}>Swipe down to close</Text>
+          <Text style={styles.bottomText}>Swipe right to close</Text>
         </View>
       </View>
     </Modal>
@@ -104,16 +45,18 @@ export default SearchModal;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: "60%",
     height: "100%",
     opacity: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    position: "absolute",
+    top: -20,
+    right: -20,
+    borderBottomRightRadius: 52,
   },
 
   modal: {
-    width: 350,
-    height: 500,
+    width: "100%",
+    height: "105%",
     backgroundColor: "white",
     borderRadius: 20,
     shadowColor: "black",
@@ -122,30 +65,11 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
 
-  tabContainer: {
-    width: "100%",
-    height: "15%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-  },
-
-  tab: {
-    width: "30%",
-    height: "80%",
-    alignItems: "center",
-    justifyContent: "center",
-    borderColor: "black",
-    borderRadius: 10,
-  },
-
   searchContainer: {
-    marginTop: "2%",
+    marginTop: 100,
     alignSelf: "center",
     width: "80%",
-    height: "8%",
+    height: "5%",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
