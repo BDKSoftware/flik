@@ -24,9 +24,11 @@ const SearchModal = ({ isVisible, setIsVisible }) => {
       animationOutTiming={10}
       transparent={true}
       visible={isVisible}
-      hasBackdrop={false}
+      hasBackdrop={true}
       swipeDirection={["right"]}
       onSwipeMove={() => setIsVisible(false)}
+      onBackdropPress={() => setIsVisible(false)}
+      backdropOpacity={0}
     >
       <View style={styles.container}>
         <View style={styles.modal}>
