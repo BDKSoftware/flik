@@ -12,7 +12,7 @@ import Modal from "react-native-modal";
 
 import { AntDesign } from "@expo/vector-icons";
 
-const SearchModal = ({ isVisible, setIsVisible }) => {
+const SearchModal = ({ isVisible, setIsVisible, image }) => {
   const [search, setSearch] = React.useState("");
   const [filter, setFilter] = React.useState("All");
 
@@ -34,7 +34,11 @@ const SearchModal = ({ isVisible, setIsVisible }) => {
         <View style={styles.modal}>
           <View style={styles.searchContainer}>
             <AntDesign name="search1" size={15} color="9A9A9A" />
-            <TextInput placeholder="search" style={styles.search} />
+            <TextInput
+              placeholder="search"
+              style={styles.search}
+              placeholderTextColor="black"
+            />
           </View>
           <Text style={styles.bottomText}>Swipe right to close</Text>
         </View>
@@ -87,6 +91,7 @@ const styles = StyleSheet.create({
     height: "100%",
     marginLeft: 10,
     fontSize: 16,
+    color: "black",
   },
 
   bottomText: {

@@ -16,6 +16,7 @@ const TopBar = ({ navigation }) => {
       <SideBarModal
         show={showSidebar}
         setShow={toggleSidebar}
+        image={require("../assets/headshot.jpg")}
         navigation={navigation}
       />
       <TouchableOpacity onPress={toggleSidebar}>

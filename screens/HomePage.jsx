@@ -70,7 +70,7 @@ const HomePage = ({ navigation }) => {
       <View style={styles.cryptoContainer}>
         <Text style={styles.walletText}>your wallet</Text>
         <LinearGradient
-          colors={["#CEA5FE", "#FFFFFF"]}
+          colors={["#7700FF", "#FFFFFF"]}
           start={{ x: 0.5, y: 0.0 }}
           end={{ x: 0.5, y: 1.0 }}
           style={{

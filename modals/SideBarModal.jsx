@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
-const SideBarModal = ({ show, setShow, navigation }) => {
+const SideBarModal = ({ show, setShow, image }) => {
   return (
     <Modal
       animationIn={"slideInLeft"}
@@ -25,10 +25,7 @@ const SideBarModal = ({ show, setShow, navigation }) => {
       <View style={styles.container}>
         <View style={styles.modal}>
           <View style={styles.topContainer}>
-            <Image
-              source={require("../assets/headshot.jpg")}
-              style={styles.image}
-            />
+            <Image source={image} style={styles.image} />
             <Text style={styles.username}>testuser</Text>
           </View>
           <View style={styles.linkContainer}>

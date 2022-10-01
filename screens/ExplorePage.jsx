@@ -147,7 +147,11 @@ const ExplorePage = () => {
       </View>
       <View style={styles.searchContainer}>
         <AntDesign name="search1" size={15} color="9A9A9A" />
-        <TextInput placeholder="search" style={styles.search} />
+        <TextInput
+          placeholder="search"
+          style={styles.search}
+          placeholderTextColor="grey"
+        />
       </View>
 
       {/* THIS WILL CHANGE SLIGHTLY WHEN API IS DONE */}
