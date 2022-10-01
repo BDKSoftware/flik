@@ -62,6 +62,7 @@ const HomePage = ({ navigation }) => {
           <Image
             source={require("../assets/headshot.jpg")}
             style={styles.profilePicture}
+            defaultSource={require("../assets/headshot.jpg")}
           />
         </View>
         <Text style={styles.profileName}>testuser</Text>
