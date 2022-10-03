@@ -1,14 +1,12 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Animated,
-} from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { useAuth } from "../context/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 export default function LandingPage({ navigation }) {
+  const { isLoggedIn } = useAuth();
+
   const handleNavigateToRegister = () => {
     navigation.navigate("Register");
   };
@@ -17,10 +15,18 @@ export default function LandingPage({ navigation }) {
     navigation.navigate("Login");
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigation.navigate("AuthenticatedStack");
+    }
+  }, [isLoggedIn]);
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Text style={styles.title}>flik</Text>
+        <Image
+          source={require("../assets/flik_white.png")}
+          style={styles.title}
+        />
       </View>
       <View style={styles.triangleContainer}>
         <Animatable.Image
@@ -83,9 +89,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: "64px",
-    fontWeight: "800",
-    color: "#FFFFFF",
+    width: 200,
+    height: 100,
+    resizeMode: "contain",
   },
 
   triangleContainer: {

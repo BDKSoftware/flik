@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Image, View, TouchableOpacity } from "react-native";
 import React from "react";
 
 import { FontAwesome } from "@expo/vector-icons";
@@ -23,12 +23,10 @@ const TopBar = ({ navigation }) => {
         <FontAwesome name="bars" size={24} color="black" />
       </TouchableOpacity>
       <View style={{ flexDirection: "row" }}>
-        <Text style={{ color: "#7700FF", fontSize: 24, fontWeight: "bold" }}>
-          f
-        </Text>
-        <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center" }}>
-          lik
-        </Text>
+        <Image
+          source={require("../assets/flik_purple.png")}
+          style={styles.title}
+        />
       </View>
     </View>
   );
@@ -46,5 +44,12 @@ const styles = StyleSheet.create({
     width: 70,
     alignItems: "center",
     justifyContent: "space-between",
+  },
+
+  title: {
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
+    marginLeft: 10,
   },
 });

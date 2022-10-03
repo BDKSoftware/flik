@@ -8,6 +8,7 @@ import {
   ActionSheetIOS,
 } from "react-native";
 import React, { useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 import TopBar from "../components/TopBar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -20,12 +21,20 @@ import * as ImagePicker from "expo-image-picker";
 import ErrorNFTModal from "../modals/ErrorNFTModal";
 import SuccessModal from "../modals/SuccessModal";
 
-const PostPage = () => {
+const PostPage = ({ navigation }) => {
   const [image, setImage] = React.useState(null);
 
   const [category, setCategory] = React.useState("");
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(false);
+
+  const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigation.navigate("LandingPage");
+    }
+  }, [isLoggedIn]);
 
   let items = [
     { id: "0", title: "Food" },

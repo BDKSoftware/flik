@@ -7,16 +7,26 @@ import {
   Image,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useState } from "react";
-import { addDisplayName, signUp } from "../firebase";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import ErrorModal from "../modals/ErrorModal";
 
 export default function LandingPage({ navigation }) {
+  const { register, isLoggedIn } = useAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowing, setIsShowing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [profileImage, setProfileImage] = useState(
+    require("../assets/defaultImage.png")
+  );
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigation.navigate("AuthenticatedStack");
+    }
+  }, [isLoggedIn]);
 
   const handleFirebaseError = (error) => {
     switch (error) {
@@ -37,15 +47,32 @@ export default function LandingPage({ navigation }) {
   };
 
   const handleRegister = async () => {
-    await signUp(email, password)
-      .then((userCreds) => {
-        const user = userCreds.user;
-        addDisplayName(user, username);
-        navigation.navigate("Login");
-        alert("Successfully registered!");
+    await fetch(
+      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: password,
+          email: email,
+          username: username,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        if (json) {
+          console.log(json);
+          register();
+          navigation.navigate("Login");
+        } else {
+          handleFirebaseError(json.message);
+        }
       })
-      .catch(function (error) {
-        handleFirebaseError(error.code);
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -64,12 +91,25 @@ export default function LandingPage({ navigation }) {
       />
 
       <View style={styles.topContainer}>
-        <Text style={styles.title}>flik</Text>
+        <Image
+          source={require("../assets/flik_white.png")}
+          style={styles.title}
+        />
       </View>
       <View style={styles.bottomContainer}>
         <View style={styles.formContainer}>
           <View style={styles.formtitleContainer}>
             <Text style={styles.formtitle}>create your account</Text>
+          </View>
+          <View style={styles.imageInputContainer}>
+            <Image
+              source={profileImage}
+              defaultSource={profileImage}
+              style={styles.image}
+            />
+            <TouchableOpacity>
+              <Text style={styles.imageText}>upload profile picture</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.inputContainer}>
             <TextInput
@@ -92,25 +132,6 @@ export default function LandingPage({ navigation }) {
               onChangeText={setPassword}
               // secureTextEntry={true}
             />
-          </View>
-          <View style={styles.lineContainer}>
-            <View style={styles.line}></View>
-            <Text style={styles.lineText}>or</Text>
-            <View style={styles.line}></View>
-          </View>
-          <View style={styles.socialContainer}>
-            <TouchableOpacity>
-              <Image
-                source={require("../assets/facebook.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image
-                source={require("../assets/google.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -148,9 +169,10 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: "64px",
-    fontWeight: "800",
-    color: "#FFFFFF",
+    marginTop: 100,
+    width: 200,
+    height: 100,
+    resizeMode: "contain",
   },
 
   bottomContainer: {
@@ -162,13 +184,13 @@ const styles = StyleSheet.create({
 
   formContainer: {
     width: "80%",
-    height: "60%",
+    height: "70%",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
 
   formtitleContainer: {
-    height: "20%",
+    height: "10%",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -188,7 +210,7 @@ const styles = StyleSheet.create({
   },
 
   formInput: {
-    height: "20%",
+    height: "15%",
     width: "80%",
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
@@ -259,5 +281,27 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     marginHorizontal: 25,
+  },
+
+  imageInputContainer: {
+    height: "40%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+
+  image: {
+    height: 100,
+    width: 100,
+    borderRadius: 100,
+    resizeMode: "contain",
+  },
+
+  imageText: {
+    color: "#7804fc",
+    fontSize: 12,
+    fontWeight: "700",
+
+    padding: 5,
   },
 });

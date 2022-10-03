@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { logout } from "../firebase";
 import Carousel from "react-native-snap-carousel";
 
@@ -17,7 +17,59 @@ import { LinearGradient } from "expo-linear-gradient";
 // Icon Imports
 import CarouselCardItem from "../components/CarouselCardItem";
 
+// API
+import { useAuth } from "../context/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const HomePage = ({ navigation }) => {
+  const { isLoggedIn } = useAuth();
+  const [userName, setUserName] = React.useState("Username");
+  const [profilePic, setProfilePic] = React.useState(
+    require("../assets/defaultImage.png")
+  );
+  const [balance, setBalance] = React.useState(0);
+
+  const getUserInfo = async () => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    await fetch(
+      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/user",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.displayName) {
+          setUserName(json.displayName);
+        }
+
+        if (json.photoURL) {
+          setProfilePic(json.photoURL);
+        }
+
+        if (json.balance) {
+          setBalance(json.balance);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigation.navigate("LandingPage");
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
   const isCarousel = React.useRef(null);
   // TEST DATA
   const data = [
@@ -60,12 +112,12 @@ const HomePage = ({ navigation }) => {
         {/* PLACEHOLDER FOR USER INFO */}
         <View style={styles.profilePictureContainer}>
           <Image
-            source={require("../assets/headshot.jpg")}
+            source={profilePic}
             style={styles.profilePicture}
-            defaultSource={require("../assets/headshot.jpg")}
+            defaultSource={profilePic}
           />
         </View>
-        <Text style={styles.profileName}>testuser</Text>
+        <Text style={styles.profileName}>{userName}</Text>
       </View>
 
       <View style={styles.cryptoContainer}>
@@ -83,7 +135,7 @@ const HomePage = ({ navigation }) => {
             padding: 10,
           }}
         >
-          <Text style={styles.cryptoText}>1250.71 APT</Text>
+          <Text style={styles.cryptoText}>{balance} APT</Text>
           <TouchableOpacity style={styles.cryptoButton}>
             <Text style={styles.cryptoButtonText}>Connect</Text>
           </TouchableOpacity>

@@ -1,12 +1,21 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import Modal from "react-native-modal";
 
 import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
 
 const SideBarModal = ({ show, setShow, image }) => {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setShow(false);
+  };
+
   return (
     <Modal
       animationIn={"slideInLeft"}
@@ -40,6 +49,27 @@ const SideBarModal = ({ show, setShow, image }) => {
             <View style={styles.link}>
               <Ionicons name="wallet-outline" size={20} color="grey" />
               <Text style={{ ...styles.linkText }}>wallet {"  "}</Text>
+            </View>
+            <View style={{ ...styles.link }}>
+              <TouchableOpacity
+                onPress={handleLogout}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="logout"
+                  size={20}
+                  color="#7804fc"
+                />
+                <Text style={{ ...styles.linkText, color: "#7804fc" }}>
+                  log out
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -96,14 +126,14 @@ const styles = StyleSheet.create({
   },
 
   linkContainer: {
-    width: "60%",
-    height: "30%",
-    alignItems: "center",
+    width: "100%",
+    height: "40%",
+    alignItems: "flex-start",
     justifyContent: "space-evenly",
   },
 
   link: {
-    width: "100%",
+    width: "60%",
     height: "20%",
     alignItems: "center",
     justifyContent: "space-evenly",

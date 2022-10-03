@@ -7,15 +7,24 @@ import {
   Image,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useState } from "react";
-import { login } from "../firebase";
+import { useEffect, useState } from "react";
 import ErrorModal from "../modals/ErrorModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 export default function LoginPage({ navigation }) {
+  const { login, isLoggedIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowing, setIsShowing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigation.navigate("AuthenticatedStack");
+    }
+  }, [isLoggedIn]);
 
   const handleFirebaseError = (error) => {
     switch (error) {
@@ -39,15 +48,30 @@ export default function LoginPage({ navigation }) {
   };
 
   const handleLogin = async () => {
-    return await login(email, password)
-      .then((userCreds) => {
-        const user = userCreds.user;
-        navigation.navigate("AuthenticatedStack", {
-          screen: "Home",
-        });
+    await fetch(
+      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/auth/login/email",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: password,
+          email: email,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.jwt) {
+          AsyncStorage.setItem("@user_token", json.jwt);
+          login("Token: " + json.jwt);
+        } else {
+          handleFirebaseError(json.message);
+        }
       })
       .catch((error) => {
-        handleFirebaseError(error.code);
+        console.log("Error: " + error);
       });
   };
 
@@ -66,7 +90,10 @@ export default function LoginPage({ navigation }) {
       />
 
       <View style={styles.topContainer}>
-        <Text style={styles.title}>flik</Text>
+        <Image
+          source={require("../assets/flik_white.png")}
+          style={styles.title}
+        />
       </View>
       <View style={styles.bottomContainer}>
         <View style={styles.formContainer}>
@@ -88,29 +115,6 @@ export default function LoginPage({ navigation }) {
               onChangeText={setPassword}
               //secureTextEntry={true}
             />
-
-            <TouchableOpacity>
-              <Text style={styles.forgotPassword}>forgot your password?</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.lineContainer}>
-            <View style={styles.line}></View>
-            <Text style={styles.lineText}>or</Text>
-            <View style={styles.line}></View>
-          </View>
-          <View style={styles.socialContainer}>
-            <TouchableOpacity>
-              <Image
-                source={require("../assets/facebook.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image
-                source={require("../assets/google.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -143,9 +147,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: "64px",
-    fontWeight: "800",
-    color: "#FFFFFF",
+    width: 200,
+    height: 100,
+    resizeMode: "contain",
   },
 
   bottomContainer: {
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
 
   formContainer: {
     width: "80%",
-    height: "65%",
+    height: "45%",
     borderRadius: 20,
     backgroundColor: "white",
   },
@@ -176,7 +180,7 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    height: "50%",
+    height: "80%",
     width: "100%",
     alignItems: "center",
     justifyContent: "space-evenly",

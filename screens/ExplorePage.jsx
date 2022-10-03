@@ -7,7 +7,7 @@ import {
   View,
   Button,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 
 import TopBar from "../components/TopBar";
 
@@ -17,8 +17,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import NFTCard from "../components/NFTCard";
 import SearchModal from "../modals/SearchModal";
+import { useAuth } from "../context/AuthContext";
 
-const ExplorePage = () => {
+const ExplorePage = ({ navigation }) => {
   const [category, setCategory] = React.useState("fire");
   const [showSearch, setShowSearch] = React.useState(false);
 
@@ -100,6 +101,14 @@ const ExplorePage = () => {
         "https://webneel.com/daily/sites/default/files/images/daily/10-2013/12-nature-photography-tree-pixelecta.jpg",
     },
   ]);
+
+  const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigation.navigate("LandingPage");
+    }
+  }, [isLoggedIn]);
 
   const handleSwitchCategory = (category) => {
     if (category === "fire") {
