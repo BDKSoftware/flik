@@ -34,7 +34,14 @@ const SideBarModal = ({ show, setShow, image }) => {
       <View style={styles.container}>
         <View style={styles.modal}>
           <View style={styles.topContainer}>
-            <Image source={image} style={styles.image} defaultSource={image} />
+            <Image
+              source={
+                image == null
+                  ? require("../assets/defaultImage.png")
+                  : { uri: image }
+              }
+              style={styles.image}
+            />
             <Text style={styles.username}>testuser</Text>
           </View>
           <View style={styles.linkContainer}>

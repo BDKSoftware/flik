@@ -24,9 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const HomePage = ({ navigation }) => {
   const { isLoggedIn } = useAuth();
   const [userName, setUserName] = React.useState("Username");
-  const [profilePic, setProfilePic] = React.useState(
-    require("../assets/defaultImage.png")
-  );
+  const [profilePic, setProfilePic] = React.useState(null);
   const [balance, setBalance] = React.useState(0);
   const [carouselItems, setCarouselItems] = React.useState([]);
 
@@ -48,8 +46,8 @@ const HomePage = ({ navigation }) => {
           setUserName(json.username);
         }
 
-        if (json.photoURL) {
-          setProfilePic(json.photoURL);
+        if (json.profilePicUrl) {
+          setProfilePic(json.profilePicUrl);
         }
 
         if (json.walletBalance) {
@@ -122,16 +120,6 @@ const HomePage = ({ navigation }) => {
         "https://images.unsplash.com/photo-1548661651-9adb0e0ccc98?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
     },
   ];
-  const handleLogout = () => {
-    logout()
-      .then(() => {
-        console.log("Logged out");
-        navigation.navigate("LandingPage");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   return (
     <View style={styles.container}>
@@ -142,9 +130,13 @@ const HomePage = ({ navigation }) => {
         {/* PLACEHOLDER FOR USER INFO */}
         <View style={styles.profilePictureContainer}>
           <Image
-            source={profilePic}
+            source={
+              profilePic == null
+                ? require("../assets/defaultImage.png")
+                : { uri: profilePic }
+            }
             style={styles.profilePicture}
-            defaultSource={profilePic}
+            defaultSource={require("../assets/defaultImage.png")}
           />
         </View>
         <Text style={styles.profileName}>{userName}</Text>
@@ -165,7 +157,7 @@ const HomePage = ({ navigation }) => {
             padding: 10,
           }}
         >
-          <Text style={styles.cryptoText}>{balance} APT</Text>
+          <Text style={styles.cryptoText}>{balance} FLIKC</Text>
           <TouchableOpacity style={styles.cryptoButton}>
             <Text style={styles.cryptoButtonText}>Connect</Text>
           </TouchableOpacity>

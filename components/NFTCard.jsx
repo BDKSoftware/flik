@@ -11,17 +11,13 @@ const NFTCard = ({ id, name, price, timeSincePost, author, likes, image }) => {
       </View>
       <View style={styles.topContainer}>
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.timeSincePost}>
-          <AntDesign name="clockcircleo" size={11} color="grey" />
-          {" " + timeSincePost}m ago
-        </Text>
+        <Text style={styles.price}>{price} FLIKC</Text>
         <Text style={styles.likes}>
           <AntDesign name="heart" size={11} color="red" />
           {" " + likes}
         </Text>
       </View>
       <View style={styles.bottomContainer}>
-        <Text style={styles.price}>{price} APT</Text>
         <Text style={styles.author}>{author}</Text>
       </View>
     </View>

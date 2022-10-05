@@ -5,11 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  ActionSheetIOS,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import ErrorModal from "../modals/ErrorModal";
+import * as ImagePicker from "expo-image-picker";
 
 export default function LandingPage({ navigation }) {
   const { register, isLoggedIn } = useAuth();
@@ -21,6 +23,58 @@ export default function LandingPage({ navigation }) {
   const [profileImage, setProfileImage] = useState(
     require("../assets/defaultImage.png")
   );
+
+  const handleActionSheet = () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Cancel", "Photo Gallery", "Camera"],
+        cancelButtonIndex: 0,
+        userInterfaceStyle: "dark",
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          return;
+        } else if (buttonIndex === 1) {
+          pickImage();
+        } else if (buttonIndex === 2) {
+          openCamera();
+        }
+      }
+    );
+  };
+
+  const [status, requestPermission] = ImagePicker.useCameraPermissions();
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setProfileImage(result);
+    }
+  };
+
+  const openCamera = async () => {
+    // Ask the user for the permission to access the camera
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("You've refused to allow this appp to access your camera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync();
+
+    // Explore the result
+
+    if (!result.cancelled) {
+      setProfileImage(result);
+    }
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -46,34 +100,50 @@ export default function LandingPage({ navigation }) {
     setIsShowing(true);
   };
 
+  const createFormData = (photo, body = {}) => {
+    const data = new FormData();
+
+    data.append("profileImage", {
+      name: username,
+      type: "image",
+      uri: Platform.OS === "ios" ? photo.uri.replace("file://", "") : photo.uri,
+    });
+
+    Object.keys(body).forEach((key) => {
+      data.append(key, body[key]);
+    });
+    return data;
+  };
+
   const handleRegister = async () => {
-    await fetch(
-      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/auth/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          password: password,
-          email: email,
-          username: username,
-        }),
-      }
-    )
-      .then((response) => response.json())
-      .then((json) => {
-        if (json) {
-          console.log(json);
-          register();
-          navigation.navigate("Login");
-        } else {
-          handleFirebaseError(json.message);
+    try {
+      await fetch(
+        "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+          body: createFormData(profileImage, {
+            password: password,
+            email: email,
+            username: username,
+          }),
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.message) {
+            handleFirebaseError(json.message);
+          } else {
+            register();
+            navigation.navigate("Login");
+          }
+        });
+    } catch (error) {
+      console.log(error);
+      console.log("error");
+    }
   };
 
   return (
@@ -107,7 +177,7 @@ export default function LandingPage({ navigation }) {
               defaultSource={profileImage}
               style={styles.image}
             />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleActionSheet}>
               <Text style={styles.imageText}>upload profile picture</Text>
             </TouchableOpacity>
           </View>

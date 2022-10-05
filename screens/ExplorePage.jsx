@@ -18,6 +18,9 @@ import { Ionicons } from "@expo/vector-icons";
 import NFTCard from "../components/NFTCard";
 import SearchModal from "../modals/SearchModal";
 import { useAuth } from "../context/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
+import { Permissions } from "expo";
 
 const ExplorePage = ({ navigation }) => {
   const [category, setCategory] = React.useState("fire");
@@ -26,83 +29,91 @@ const ExplorePage = ({ navigation }) => {
   const [local, setLocal] = React.useState([]);
 
   //Change with API call
-  const [filters, setFilters] = React.useState([
-    "Sports",
-    "Art",
-    "Music",
-    "Fashion",
-    "Gaming",
-    "Food",
-    "Pets",
-    "Travel",
-    "Nature",
-    "Fire",
-  ]);
+  const [filters, setFilters] = React.useState([]);
 
   // SET TO NULL ONCE API IS CALLED
-  const [cards, setCards] = React.useState([
-    {
-      id: 1,
-      name: "NFT 1",
-      price: "2.23",
-      timeSincePost: "12", // set this in minutes on the backend
-      author: "@BradleyKukuk",
-      likes: 12,
-      image:
-        "https://thumbor.thedailymeal.com/YdMaxJcfoH7UAxUfAHc0eLqpHtQ=/870x565/filters:format(webp)/https://www.theactivetimes.com/sites/default/files/slideshows/102277/114608/2_Mike_Beauchamp_istock_getty_images.jpg",
-    },
-    {
-      id: 2,
-      name: "NFT 2",
-      price: "201.23",
-      timeSincePost: "12", // set this in minutes on the backend
-      author: "@BradleyKukuk",
-      likes: 12,
-      image:
-        "https://i.pinimg.com/originals/cd/0c/13/cd0c13629f217c1ab72c61d0664b3f99.jpg",
-    },
-    {
-      id: 3,
-      name: "NFT 3",
-      price: "7111.23",
-      timeSincePost: "12", // set this in minutes on the backend
-      author: "@BradleyKukuk",
-      likes: 12,
-      image:
-        "https://iso.500px.com/wp-content/uploads/2016/03/stock-photo-142984111-1500x1000.jpg",
-    },
-    {
-      id: 4,
-      name: "NFT 4",
-      price: "2.23",
-      timeSincePost: "12", // set this in minutes on the backend
-      author: "@BradleyKukuk",
-      likes: 12,
-      image:
-        "https://webneel.com/daily/sites/default/files/images/daily/08-2018/1-nature-photography-spring-season-mumtazshamsee.jpg",
-    },
+  const [cards, setCards] = React.useState([]);
 
-    {
-      id: 5,
-      name: "NFT 5",
-      price: "2.23",
-      timeSincePost: "12", // set this in minutes on the backend
-      author: "@BradleyKukuk",
-      likes: 12,
-      image:
-        "https://webneel.com/daily/sites/default/files/images/daily/10-2013/19-nature-photography-forest.jpg",
-    },
-    {
-      id: 6,
-      name: "NFT 6",
-      price: "2.23",
-      timeSincePost: "12", // set this in minutes on the backend
-      author: "@BradleyKukuk",
-      likes: 12,
-      image:
-        "https://webneel.com/daily/sites/default/files/images/daily/10-2013/12-nature-photography-tree-pixelecta.jpg",
-    },
-  ]);
+  const getFilters = async () => {
+    setFilters([]);
+    const userToken = await AsyncStorage.getItem("@user_token");
+    await fetch(
+      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/category",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        json.map((name, index) => {
+          setFilters((categories) => [
+            ...categories,
+            { id: index, title: name.name },
+          ]);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getFire = async () => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    try {
+      await fetch(
+        "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/marketplace/onfire",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setFire(data);
+          setCards(data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getLocal = async () => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      this.setState({
+        locationResult: "Permission to access location was denied",
+      });
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    try {
+      await fetch(
+        `http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/marketplace/local?currentLatitude=${location.coords.latitude}&currentLongitude=${location.coords.longitude}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setLocal(data);
+          setCards(data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const { isLoggedIn } = useAuth();
 
@@ -112,12 +123,21 @@ const ExplorePage = ({ navigation }) => {
     }
   }, [isLoggedIn]);
 
-  const handleSwitchCategory = (category) => {
-    if (category === "fire") {
-      setCategory("local");
-    } else {
-      setCategory("fire");
-    }
+  useEffect(() => {
+    getFire();
+    getFilters();
+  }, []);
+
+  const handleFire = () => {
+    setCards([]);
+    setCategory("fire");
+    getFire();
+  };
+
+  const handleLocal = () => {
+    setCards([]);
+    setCategory("Local");
+    getLocal();
   };
 
   const handleSearchModal = () => {
@@ -134,17 +154,11 @@ const ExplorePage = ({ navigation }) => {
         <Text style={styles.title}>the marketplace</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={() => handleSwitchCategory(category)}
-          style={{ ...styles.labels }}
-        >
+        <TouchableOpacity onPress={handleFire} style={{ ...styles.labels }}>
           <Fontisto name="fire" size={12} color="#FF0000" />
           <Text style={styles.labelText}>on fire</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleSwitchCategory(category)}
-          style={styles.labels}
-        >
+        <TouchableOpacity onPress={handleLocal} style={styles.labels}>
           <Entypo name="location" size={12} color="#2C774E" />
           <Text style={styles.labelText}>local</Text>
         </TouchableOpacity>
@@ -183,9 +197,9 @@ const ExplorePage = ({ navigation }) => {
             All
           </Text>
         </TouchableOpacity>
-        {filters.map((filter, index) => (
-          <TouchableOpacity style={styles.filter} key={index}>
-            <Text style={styles.filterText}>{filter}</Text>
+        {filters.map((filter) => (
+          <TouchableOpacity style={styles.filter} key={filter.id}>
+            <Text style={styles.filterText}>{filter.title}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -211,13 +225,13 @@ const ExplorePage = ({ navigation }) => {
         {cards.map((card, index) => {
           return (
             <NFTCard
-              id={card.id}
+              id={card.uuid}
               name={card.name}
               price={card.price}
               timeSincePost={card.timeSincePost}
-              author={card.author}
+              author={card.owner}
               likes={card.likes}
-              image={card.image}
+              image={card.imageUrl}
               key={index}
             />
           );
