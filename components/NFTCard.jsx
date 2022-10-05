@@ -18,7 +18,7 @@ const NFTCard = ({ id, name, price, timeSincePost, author, likes, image }) => {
         </Text>
       </View>
       <View style={styles.bottomContainer}>
-        <Text style={styles.author}>{author}</Text>
+        <Text style={styles.author}>@{author}</Text>
       </View>
     </View>
   );
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   topContainer: {
     alignSelf: "center",
     width: "90%",
-    height: "15%",
+    height: "10%",
     justifyContent: "space-evenly",
     flexDirection: "row",
   },
@@ -85,12 +85,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "60%",
     height: "15%",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
     flexDirection: "row",
   },
 
   author: {
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: "800",
     color: "grey",
   },

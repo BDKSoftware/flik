@@ -221,8 +221,11 @@ const ExplorePage = ({ navigation }) => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    getFire();
-    getFilters();
+    const unsubscribe = navigation.addListener("focus", () => {
+      getFilters();
+      getFire();
+    });
+    return unsubscribe;
   }, []);
 
   return (
@@ -338,13 +341,14 @@ const ExplorePage = ({ navigation }) => {
       >
         {cards.length > 0 ? (
           cards.map((card, index) => {
+            console.log(card);
             return (
               <NFTCard
                 id={card.uuid}
                 name={card.name}
                 price={card.price}
                 timeSincePost={card.timeSincePost}
-                author={card.owner}
+                author={card.ownerUsername}
                 likes={card.likes}
                 image={card.imageUrl}
                 key={index}

@@ -138,8 +138,11 @@ const PostPage = ({ navigation }) => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    getCategories();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      getCategories();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     if (image === null) {
