@@ -20,9 +20,7 @@ export default function LandingPage({ navigation }) {
   const [password, setPassword] = useState("");
   const [isShowing, setIsShowing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [profileImage, setProfileImage] = useState(
-    require("../assets/defaultImage.png")
-  );
+  const [profileImage, setProfileImage] = useState(null);
 
   const handleActionSheet = () => {
     ActionSheetIOS.showActionSheetWithOptions(
@@ -103,11 +101,16 @@ export default function LandingPage({ navigation }) {
   const createFormData = (photo, body = {}) => {
     const data = new FormData();
 
-    data.append("profileImage", {
-      name: username,
-      type: "image",
-      uri: Platform.OS === "ios" ? photo.uri.replace("file://", "") : photo.uri,
-    });
+    if (photo === null) {
+      data.append("profileImage", null);
+    } else {
+      data.append("profileImage", {
+        name: username,
+        type: "image",
+        uri:
+          Platform.OS === "ios" ? photo.uri.replace("file://", "") : photo.uri,
+      });
+    }
 
     Object.keys(body).forEach((key) => {
       data.append(key, body[key]);
@@ -116,6 +119,8 @@ export default function LandingPage({ navigation }) {
   };
 
   const handleRegister = async () => {
+    if (!validateForm()) return;
+
     try {
       await fetch(
         "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/auth/register",
@@ -134,6 +139,7 @@ export default function LandingPage({ navigation }) {
         .then((response) => response.json())
         .then((json) => {
           if (json.message) {
+            console.log(json.message);
             handleFirebaseError(json.message);
           } else {
             register();
@@ -144,6 +150,28 @@ export default function LandingPage({ navigation }) {
       console.log(error);
       console.log("error");
     }
+  };
+
+  const validateForm = () => {
+    if (username.length < 6) {
+      setErrorMessage("Please enter a Longer Username");
+      setIsShowing(true);
+      return false;
+    }
+
+    if (email.length < 6) {
+      setErrorMessage("Please enter a valid email");
+      setIsShowing(true);
+      return false;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage(" Password must be 6 characters long");
+      setIsShowing(true);
+      return false;
+    }
+
+    return true;
   };
 
   return (
@@ -173,8 +201,11 @@ export default function LandingPage({ navigation }) {
           </View>
           <View style={styles.imageInputContainer}>
             <Image
-              source={profileImage}
-              defaultSource={profileImage}
+              source={
+                profileImage != null
+                  ? profileImage
+                  : require("../assets/defaultImage.png")
+              }
               style={styles.image}
             />
             <TouchableOpacity onPress={handleActionSheet}>
