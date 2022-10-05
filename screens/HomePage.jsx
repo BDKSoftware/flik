@@ -94,9 +94,14 @@ const HomePage = ({ navigation }) => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    getUserInfo();
-    getUserNFTs();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      getUserInfo();
+      getUserNFTs();
+      console.log("I RAN");
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const isCarousel = React.useRef(null);
   // TEST DATA

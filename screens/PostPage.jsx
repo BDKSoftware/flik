@@ -14,6 +14,8 @@ import TopBar from "../components/TopBar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
+import { manipulateAsync } from "expo-image-manipulator";
 
 // Expo Import
 import * as ImagePicker from "expo-image-picker";
@@ -75,12 +77,20 @@ const PostPage = ({ navigation }) => {
       data.append(key, body[key]);
     });
 
-    console.log(data._parts[0]);
     return data;
   };
 
   const mintNFT = async () => {
     const userToken = await AsyncStorage.getItem("@user_token");
+    console.log("Minting NFT");
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      this.setState({
+        locationResult: "Permission to access location was denied",
+      });
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
     try {
       await fetch(
         "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/nft/mint",
@@ -94,8 +104,8 @@ const PostPage = ({ navigation }) => {
             name: name,
             price: price,
             category: category,
-            longitude: 100,
-            latitude: 100,
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
           }),
         }
       )
@@ -104,7 +114,9 @@ const PostPage = ({ navigation }) => {
           if (json.message) {
             setShowErrorModal(true);
             console.log(json.message);
+            console.log(json);
           } else {
+            console.log(json);
             setShowSuccessModal(true);
             setCategory("");
             setName("");
@@ -115,6 +127,7 @@ const PostPage = ({ navigation }) => {
     } catch (error) {
       console.log(error);
       console.log("error");
+      setShowErrorModal(true);
     }
   };
 
@@ -174,7 +187,7 @@ const PostPage = ({ navigation }) => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
 
     if (permissionResult.granted === false) {
-      alert("You've refused to allow this appp to access your camera!");
+      alert("You've refused to allow this app to access your camera!");
       return;
     }
 
