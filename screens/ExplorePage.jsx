@@ -5,7 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Button,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect } from "react";
 
@@ -20,13 +20,13 @@ import SearchModal from "../modals/SearchModal";
 import { useAuth } from "../context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-import { Permissions } from "expo";
 
 const ExplorePage = ({ navigation }) => {
   const [category, setCategory] = React.useState("fire");
   const [showSearch, setShowSearch] = React.useState(false);
   const [fire, setFire] = React.useState([]);
   const [local, setLocal] = React.useState([]);
+  const [activeFilter, setActiveFilter] = React.useState("All");
 
   //Change with API call
   const [filters, setFilters] = React.useState([]);
@@ -78,7 +78,11 @@ const ExplorePage = ({ navigation }) => {
         .then((data) => {
           setFire(data);
           setCards(data);
-        });
+        })
+        .catch(error);
+      {
+        console.log(error);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -109,14 +113,107 @@ const ExplorePage = ({ navigation }) => {
         .then((data) => {
           setLocal(data);
           setCards(data);
-        });
+        })
+        .catch(error);
+      {
+        console.log(error);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const getFilteredSearch = async (filterName) => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    try {
+      await fetch(
+        `http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/nft/search?categories=${filterName}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message) {
+            console.log(data.message);
+          } else {
+            console.log(data);
+            setCards(data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch {
+      console.log("Error");
+    }
+  };
+
+  const searchByName = async (name) => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    try {
+      await fetch(
+        `http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/nft/search?name=${name}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message) {
+            console.log(data.message);
+          } else {
+            console.log(data);
+            setCards(data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch {
+      console.log("Error");
+    }
+  };
+
   const { isLoggedIn } = useAuth();
 
+  const handleFire = async () => {
+    setCards([]);
+    setCategory("fire");
+    getFire();
+  };
+
+  const handleLocal = async () => {
+    setCards([]);
+    setCategory("Local");
+    getLocal();
+  };
+
+  const handleSearchModal = () => {
+    setShowSearch(!showSearch);
+  };
+
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+    setCards([]);
+
+    getFilteredSearch(filter);
+  };
+
+  const handleSearchByName = (name) => {
+    setCards([]);
+    searchByName(name);
+  };
+
+  // USE EFFECTS
   useEffect(() => {
     if (!isLoggedIn) {
       navigation.navigate("LandingPage");
@@ -128,25 +225,13 @@ const ExplorePage = ({ navigation }) => {
     getFilters();
   }, []);
 
-  const handleFire = () => {
-    setCards([]);
-    setCategory("fire");
-    getFire();
-  };
-
-  const handleLocal = () => {
-    setCards([]);
-    setCategory("Local");
-    getLocal();
-  };
-
-  const handleSearchModal = () => {
-    setShowSearch(!showSearch);
-  };
-
   return (
     <View style={styles.container}>
-      <SearchModal isVisible={showSearch} setIsVisible={setShowSearch} />
+      <SearchModal
+        isVisible={showSearch}
+        setIsVisible={setShowSearch}
+        handleFilterChange={handleFilterChange}
+      />
       <View style={styles.topBarContainer}>
         <TopBar />
       </View>
@@ -176,6 +261,7 @@ const ExplorePage = ({ navigation }) => {
           placeholder="search"
           style={styles.search}
           placeholderTextColor="grey"
+          onChangeText={(value) => handleSearchByName(value)}
         />
       </View>
 
@@ -189,17 +275,45 @@ const ExplorePage = ({ navigation }) => {
         }}
       >
         <TouchableOpacity
-          style={{ ...styles.filter, backgroundColor: "#7700FF" }}
+          style={
+            activeFilter == "All"
+              ? { ...styles.filter, backgroundColor: "#7700FF" }
+              : { ...styles.filter }
+          }
+          onPress={() => {
+            handleFilterChange("All");
+            handleFire();
+          }}
         >
           <Text
-            style={{ ...styles.filterText, color: "white", fontWeight: "bold" }}
+            style={
+              activeFilter == "All"
+                ? { ...styles.filterText, color: "white", fontWeight: "bold" }
+                : { ...styles.filterText }
+            }
           >
             All
           </Text>
         </TouchableOpacity>
         {filters.map((filter) => (
-          <TouchableOpacity style={styles.filter} key={filter.id}>
-            <Text style={styles.filterText}>{filter.title}</Text>
+          <TouchableOpacity
+            style={
+              activeFilter == filter.title
+                ? { ...styles.filter, backgroundColor: "#7700FF" }
+                : { ...styles.filter }
+            } // Change based off active filter
+            key={filter.id}
+            onPress={() => handleFilterChange(filter.title)}
+          >
+            <Text
+              style={
+                activeFilter == filter.title
+                  ? { color: "white", fontWeight: "bold" }
+                  : { color: "black" }
+              }
+            >
+              {filter.title}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -222,20 +336,28 @@ const ExplorePage = ({ navigation }) => {
         indicatorStyle="black"
         scroll
       >
-        {cards.map((card, index) => {
-          return (
-            <NFTCard
-              id={card.uuid}
-              name={card.name}
-              price={card.price}
-              timeSincePost={card.timeSincePost}
-              author={card.owner}
-              likes={card.likes}
-              image={card.imageUrl}
-              key={index}
-            />
-          );
-        })}
+        {cards.length > 0 ? (
+          cards.map((card, index) => {
+            return (
+              <NFTCard
+                id={card.uuid}
+                name={card.name}
+                price={card.price}
+                timeSincePost={card.timeSincePost}
+                author={card.owner}
+                likes={card.likes}
+                image={card.imageUrl}
+                key={index}
+              />
+            );
+          })
+        ) : (
+          <ActivityIndicator
+            size="large"
+            color="#7700FF"
+            style={{ marginTop: 100 }}
+          />
+        )}
       </ScrollView>
       <TouchableOpacity style={styles.button}>
         <Ionicons name="ios-rocket" size={15} color="white" />

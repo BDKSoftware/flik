@@ -5,16 +5,82 @@ import {
   TouchableOpacity,
   TextInput,
   Button,
+  ScrollView,
 } from "react-native";
 import React from "react";
 
 import Modal from "react-native-modal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { AntDesign } from "@expo/vector-icons";
 
-const SearchModal = ({ isVisible, setIsVisible }) => {
+const SearchModal = ({ isVisible, setIsVisible, handleFilterChange }) => {
   const [search, setSearch] = React.useState("");
-  const [filter, setFilter] = React.useState("All");
+  const [filters, setFilters] = React.useState([]);
+
+  const handleSearch = () => {
+    setFilters([]);
+    searchFilters(search);
+  };
+
+  const getFilters = async () => {
+    setFilters([]);
+    const userToken = await AsyncStorage.getItem("@user_token");
+    await fetch(
+      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/category",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        json.map((name, index) => {
+          setFilters((categories) => [
+            ...categories,
+            { id: index, title: name.name },
+          ]);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const searchFilters = async (value) => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    await fetch(
+      `http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/category?filter=${value}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        json.map((name, index) => {
+          setFilters((filters) => [
+            ...filters,
+            { id: index, title: name.name },
+          ]);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  React.useEffect(() => {
+    getFilters();
+  }, []);
 
   return (
     <Modal
@@ -38,8 +104,25 @@ const SearchModal = ({ isVisible, setIsVisible }) => {
               placeholder="search"
               style={styles.search}
               placeholderTextColor="black"
+              value={search}
+              onChangeText={(value) => setSearch(value)}
+              onSubmitEditing={handleSearch}
             />
           </View>
+          <ScrollView style={styles.filters}>
+            {filters.map((filter) => (
+              <TouchableOpacity
+                key={filter.id}
+                style={styles.filterContainer}
+                onPress={() => {
+                  handleFilterChange(filter.title);
+                  setIsVisible(false);
+                }}
+              >
+                <Text style={styles.filterText}>{filter.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           <Text style={styles.bottomText}>Swipe right to close</Text>
         </View>
       </View>
@@ -100,5 +183,28 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: "lightgrey",
     fontSize: 12,
+  },
+
+  filters: {
+    alignSelf: "center",
+    marginTop: 20,
+    width: "100%",
+    height: "80%",
+    borderColor: "lightgrey",
+    borderWidth: 1,
+  },
+
+  filterContainer: {
+    width: "100%",
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomColor: "lightgrey",
+    borderBottomWidth: 1,
+  },
+
+  filterText: {
+    fontSize: 16,
+    color: "black",
   },
 });

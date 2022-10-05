@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     height: "90%",
     resizeMode: "cover",
     borderRadius: 8,
+    pixelArt: true,
   },
 
   topContainer: {
