@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
 const CarouselCardItem = ({ item, index }) => {
   return (
     <View style={styles.container} key={index}>
-      <Image source={{ uri: item.imgUrl }} style={styles.image} />
+      <Image source={{ uri: item.nft.imageUrl }} style={styles.image} />
     </View>
   );
 };

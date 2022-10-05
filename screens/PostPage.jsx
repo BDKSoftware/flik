@@ -13,6 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import TopBar from "../components/TopBar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Expo Import
 import * as ImagePicker from "expo-image-picker";
@@ -22,13 +23,100 @@ import ErrorNFTModal from "../modals/ErrorNFTModal";
 import SuccessModal from "../modals/SuccessModal";
 
 const PostPage = ({ navigation }) => {
+  // State values for input
   const [image, setImage] = React.useState(null);
-
+  const [name, setName] = React.useState("");
+  const [price, setPrice] = React.useState("");
   const [category, setCategory] = React.useState("");
+
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(false);
+  const [categories, setCategories] = React.useState([]);
 
   const { isLoggedIn } = useAuth();
+
+  const getCategories = async () => {
+    setCategories([]);
+    const userToken = await AsyncStorage.getItem("@user_token");
+    await fetch(
+      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/category",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        json.map((name, index) => {
+          setCategories((categories) => [
+            ...categories,
+            { id: index, title: name.name },
+          ]);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const createFormData = (photo, body = {}) => {
+    const data = new FormData();
+
+    data.append("imageFile", {
+      name: name,
+      type: "image",
+      uri: Platform.OS === "ios" ? photo.uri.replace("file://", "") : photo.uri,
+    });
+
+    Object.keys(body).forEach((key) => {
+      data.append(key, body[key]);
+    });
+
+    console.log(data._parts[0]);
+    return data;
+  };
+
+  const mintNFT = async () => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    try {
+      await fetch(
+        "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/nft/mint",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "content-type": "multipart/form-data",
+          },
+          body: createFormData(image, {
+            name: name,
+            price: price,
+            category: category,
+            longitude: 100,
+            latitude: 100,
+          }),
+        }
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.message) {
+            setShowErrorModal(true);
+            console.log(json.message);
+          } else {
+            setShowSuccessModal(true);
+            setCategory("");
+            setName("");
+            setPrice("");
+            setImage(null);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+      console.log("error");
+    }
+  };
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -36,18 +124,15 @@ const PostPage = ({ navigation }) => {
     }
   }, [isLoggedIn]);
 
-  let items = [
-    { id: "0", title: "Food" },
-    { id: "1", title: "Clothing" },
-    { id: "2", title: "Furniture" },
-    { id: "3", title: "Games" },
-    { id: "4", title: "Friends" },
-    { id: "5", title: "Nature" },
-    { id: "6", title: "Technology" },
-    { id: "7", title: "Sports" },
-    { id: "8", title: "Electronics" },
-    { id: "9", title: "Other" },
-  ];
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  useEffect(() => {
+    if (image === null) {
+      setCategory(" ");
+    }
+  }, [image]);
 
   // Open and Close Modal
   const handleActionSheet = () => {
@@ -79,10 +164,8 @@ const PostPage = ({ navigation }) => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result);
     }
   };
 
@@ -98,17 +181,11 @@ const PostPage = ({ navigation }) => {
     const result = await ImagePicker.launchCameraAsync();
 
     // Explore the result
-    console.log(result);
 
     if (!result.cancelled) {
-      setImage(result.uri);
-      console.log(result.uri);
+      setImage(result);
     }
   };
-
-  useEffect(() => {
-    console.log("Category: " + category);
-  }, [category]);
 
   return (
     <KeyboardAwareScrollView
@@ -130,13 +207,24 @@ const PostPage = ({ navigation }) => {
         <Text style={styles.titleText}>create your token</Text>
       </View>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: image }} style={styles.image} />
+        {image == null ? (
+          <Text>Input an image</Text>
+        ) : (
+          <Image source={{ uri: image.uri }} style={styles.image} />
+        )}
       </View>
       <View style={styles.formContaienr}>
-        <TextInput style={styles.input} placeholder="give your NFT a name" />
+        <TextInput
+          style={styles.input}
+          placeholder="give your NFT a name"
+          value={name}
+          onChangeText={(value) => setName(value)}
+        />
         <TextInput
           style={styles.input}
           placeholder="set listing price in FLIKC"
+          value={price}
+          onChangeText={(value) => setPrice(value)}
         />
         <View style={styles.dropdownContainer}>
           <AutocompleteDropdown
@@ -144,9 +232,13 @@ const PostPage = ({ navigation }) => {
             closeOnBlur={true}
             closeOnSubmit={false}
             onSelectItem={setCategory}
-            dataSet={items}
+            onChangeText={setCategory}
+            value={category}
+            dataSet={categories}
             containerStyle={{ width: "100%" }}
             direction="up"
+            showChevron={false}
+            showClear={false}
             textInputProps={{
               placeholder: "set category",
 
@@ -172,7 +264,7 @@ const PostPage = ({ navigation }) => {
           <Text style={styles.buttonText}>Select Image</Text>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={mintNFT}>
           <Text style={styles.buttonText}>Upload Image</Text>
         </TouchableOpacity>
       )}

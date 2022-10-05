@@ -4,7 +4,7 @@ import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import SideBarModal from "../modals/SideBarModal";
 
-const TopBar = ({ navigation }) => {
+const TopBar = ({ navigation, image }) => {
   const [showSidebar, setShowSidebar] = React.useState(false);
 
   const toggleSidebar = () => {
@@ -16,7 +16,7 @@ const TopBar = ({ navigation }) => {
       <SideBarModal
         show={showSidebar}
         setShow={toggleSidebar}
-        image={require("../assets/headshot.jpg")}
+        image={image}
         navigation={navigation}
       />
       <TouchableOpacity onPress={toggleSidebar}>

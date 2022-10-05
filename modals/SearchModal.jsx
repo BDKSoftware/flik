@@ -12,7 +12,7 @@ import Modal from "react-native-modal";
 
 import { AntDesign } from "@expo/vector-icons";
 
-const SearchModal = ({ isVisible, setIsVisible, image }) => {
+const SearchModal = ({ isVisible, setIsVisible }) => {
   const [search, setSearch] = React.useState("");
   const [filter, setFilter] = React.useState("All");
 

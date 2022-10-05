@@ -22,6 +22,8 @@ import { useAuth } from "../context/AuthContext";
 const ExplorePage = ({ navigation }) => {
   const [category, setCategory] = React.useState("fire");
   const [showSearch, setShowSearch] = React.useState(false);
+  const [fire, setFire] = React.useState([]);
+  const [local, setLocal] = React.useState([]);
 
   //Change with API call
   const [filters, setFilters] = React.useState([

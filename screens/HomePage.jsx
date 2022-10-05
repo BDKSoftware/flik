@@ -28,6 +28,7 @@ const HomePage = ({ navigation }) => {
     require("../assets/defaultImage.png")
   );
   const [balance, setBalance] = React.useState(0);
+  const [carouselItems, setCarouselItems] = React.useState([]);
 
   const getUserInfo = async () => {
     const userToken = await AsyncStorage.getItem("@user_token");
@@ -43,17 +44,45 @@ const HomePage = ({ navigation }) => {
     )
       .then((response) => response.json())
       .then((json) => {
-        if (json.displayName) {
-          setUserName(json.displayName);
+        if (json.username) {
+          setUserName(json.username);
         }
 
         if (json.photoURL) {
           setProfilePic(json.photoURL);
         }
 
-        if (json.balance) {
-          setBalance(json.balance);
+        if (json.walletBalance) {
+          setBalance(json.walletBalance);
         }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getUserNFTs = async () => {
+    const userToken = await AsyncStorage.getItem("@user_token");
+    await fetch(
+      "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/nft/published",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        json.map((nft) => {
+          setCarouselItems((carouselItems) => [
+            ...carouselItems,
+            {
+              nft,
+            },
+          ]);
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -68,6 +97,7 @@ const HomePage = ({ navigation }) => {
 
   useEffect(() => {
     getUserInfo();
+    getUserNFTs();
   }, []);
 
   const isCarousel = React.useRef(null);
@@ -106,7 +136,7 @@ const HomePage = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.topbarContainer}>
-        <TopBar />
+        <TopBar image={profilePic} />
       </View>
       <View style={styles.userInfoContainer}>
         {/* PLACEHOLDER FOR USER INFO */}
@@ -144,17 +174,21 @@ const HomePage = ({ navigation }) => {
       <View style={styles.imagesContainer}>
         <Text style={styles.walletText}>your nft collection</Text>
         <View style={styles.images}>
-          <Carousel
-            layout="default"
-            layoutCardOffset={9}
-            ref={isCarousel}
-            data={data}
-            renderItem={CarouselCardItem}
-            itemWidth={200}
-            sliderWidth={300}
-            inactiveSlideShift={0}
-            useScrollView={true}
-          />
+          {carouselItems.length > 0 ? (
+            <Carousel
+              layout="default"
+              layoutCardOffset={9}
+              ref={isCarousel}
+              data={carouselItems}
+              renderItem={CarouselCardItem}
+              itemWidth={200}
+              sliderWidth={300}
+              inactiveSlideShift={0}
+              useScrollView={true}
+            />
+          ) : (
+            <Text>{`You have no NFTs :(`}</Text>
+          )}
         </View>
       </View>
     </View>
