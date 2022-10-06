@@ -250,18 +250,18 @@ const PostPage = ({ navigation }) => {
           <AutocompleteDropdown
             clearOnFocus={false}
             closeOnBlur={true}
-            closeOnSubmit={false}
+            closeOnSubmit={true}
+            showChevron={false}
+            showClear={false}
             onSelectItem={setCategory}
+            initialValue={{ id: "0" }}
             onChangeText={setCategory}
             value={category}
             dataSet={categories}
             containerStyle={{ width: "100%" }}
             direction="up"
-            showChevron={false}
-            showClear={false}
             textInputProps={{
               placeholder: "set category",
-
               style: {
                 backgroundColor: "white",
                 color: "black",
