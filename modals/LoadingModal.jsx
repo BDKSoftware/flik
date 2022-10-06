@@ -17,8 +17,8 @@ const ErrorNFTModal = ({ isShowing }) => {
     >
       <View style={styles.container}>
         <View style={styles.modal}>
-          <ActivityIndicator size="large" color="#7700FF" />
-          <Text style={{ color: "#7700FF", fontSize: 20, fontWeight: "600" }}>
+          <ActivityIndicator size="large" color="#a400ff" />
+          <Text style={{ color: "#a400ff", fontSize: 20, fontWeight: "600" }}>
             minting...
           </Text>
         </View>

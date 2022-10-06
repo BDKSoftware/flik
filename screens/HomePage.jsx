@@ -151,7 +151,7 @@ const HomePage = ({ navigation }) => {
       <View style={styles.cryptoContainer}>
         <Text style={styles.walletText}>your wallet</Text>
         <LinearGradient
-          colors={["#7700FF", "#FFFFFF"]}
+          colors={["#a400ff", "#FFFFFF"]}
           start={{ x: 0.5, y: 0.0 }}
           end={{ x: 0.5, y: 1.0 }}
           style={{
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 48,
     fontWeight: "200",
-    color: "#8155D7",
+    color: "#a400ff",
   },
 
   cryptoContainer: {

@@ -279,7 +279,7 @@ const ExplorePage = ({ navigation }) => {
         <TouchableOpacity
           style={
             activeFilter == "All"
-              ? { ...styles.filter, backgroundColor: "#7700FF" }
+              ? { ...styles.filter, backgroundColor: "#a400ff" }
               : { ...styles.filter }
           }
           onPress={() => {
@@ -301,7 +301,7 @@ const ExplorePage = ({ navigation }) => {
           <TouchableOpacity
             style={
               activeFilter == filter.title
-                ? { ...styles.filter, backgroundColor: "#7700FF" }
+                ? { ...styles.filter, backgroundColor: "#a400ff" }
                 : { ...styles.filter }
             } // Change based off active filter
             key={filter.id}
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     borderRadius: 20,
-    backgroundColor: "#7700FF",
+    backgroundColor: "#a400ff",
   },
 
   buttonText: {
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     right: 10,
     borderRadius: 10,
     padding: 5,
-    backgroundColor: "#7700FF",
+    backgroundColor: "#a400ff",
   },
 
   searchButtonText: {

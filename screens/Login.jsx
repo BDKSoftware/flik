@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    backgroundColor: "#7804fc",
+    backgroundColor: "#a400ff",
   },
 
   topContainer: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   formtitle: {
     fontSize: "20px",
     fontWeight: "700",
-    color: "#7804fc",
+    color: "#a400ff",
   },
 
   inputContainer: {
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: "20px",
     fontWeight: "700",
-    color: "#7700FF",
+    color: "#a400ff",
   },
 
   button2Text: {

@@ -73,7 +73,7 @@ const SideBarModal = ({ show, setShow, image }) => {
                   size={20}
                   color="#7804fc"
                 />
-                <Text style={{ ...styles.linkText, color: "#7804fc" }}>
+                <Text style={{ ...styles.linkText, color: "#a400ff" }}>
                   log out
                 </Text>
               </TouchableOpacity>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 50,
-    borderColor: "#7804fc",
+    borderColor: "#a400ff",
     borderWidth: 2,
   },
 

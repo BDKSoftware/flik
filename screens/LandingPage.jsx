@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    backgroundColor: "#7804fc",
+    backgroundColor: "#a400ff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: "18px",
     fontWeight: "700",
     textAlign: "center",
-    color: "#7B16FF",
+    color: "#a400ff",
   },
 
   button2Text: {
