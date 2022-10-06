@@ -358,7 +358,7 @@ const ExplorePage = ({ navigation }) => {
           <ActivityIndicator
             size="large"
             color="#7700FF"
-            style={{ marginTop: 100 }}
+            style={{ marginTop: 175 }}
           />
         )}
       </ScrollView>
