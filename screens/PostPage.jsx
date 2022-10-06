@@ -176,18 +176,22 @@ const PostPage = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
+      exif: false,
+      base64: true,
     });
 
     if (!result.cancelled) {
+      result;
       setImage(result);
     }
   };
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync(
+      {}
+    );
 
     if (permissionResult.granted === false) {
       alert("You've refused to allow this app to access your camera!");

@@ -60,6 +60,7 @@ const HomePage = ({ navigation }) => {
   };
 
   const getUserNFTs = async () => {
+    setCarouselItems([]);
     const userToken = await AsyncStorage.getItem("@user_token");
     await fetch(
       "http://flikserver-env.eba-7ebfzi3t.us-east-1.elasticbeanstalk.com/nft/published",
