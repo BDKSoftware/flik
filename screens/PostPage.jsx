@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ActionSheetIOS,
+  Pressable,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -15,7 +16,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-import { manipulateAsync } from "expo-image-manipulator";
 
 // Expo Import
 import * as ImagePicker from "expo-image-picker";
@@ -24,6 +24,7 @@ import * as ImagePicker from "expo-image-picker";
 import ErrorNFTModal from "../modals/ErrorNFTModal";
 import SuccessModal from "../modals/SuccessModal";
 import LoadingModal from "../modals/LoadingModal";
+import DropDown from "../components/DropDown";
 
 const PostPage = ({ navigation }) => {
   // State values for input
@@ -31,6 +32,7 @@ const PostPage = ({ navigation }) => {
   const [name, setName] = React.useState("");
   const [price, setPrice] = React.useState("");
   const [category, setCategory] = React.useState("");
+  const [selectedValue, setSelectedValue] = React.useState("pick a category");
 
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(false);
@@ -253,35 +255,10 @@ const PostPage = ({ navigation }) => {
           onChangeText={(value) => setPrice(value)}
         />
         <View style={styles.dropdownContainer}>
-          <AutocompleteDropdown
-            clearOnFocus={false}
-            closeOnBlur={true}
-            closeOnSubmit={true}
-            showChevron={false}
-            showClear={false}
-            onSelectItem={setCategory}
-            initialValue={{ id: "0" }}
-            onChangeText={setCategory}
-            value={category}
-            dataSet={categories}
-            containerStyle={{ width: "100%" }}
-            direction="up"
-            textInputProps={{
-              placeholder: "set category",
-              style: {
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: 10,
-              },
-            }}
-            suggestionsListContainerStyle={{
-              backgroundColor: "white",
-              borderRadius: 10,
-            }}
-            rightButtonsContainerStyle={{
-              backgroundColor: "white",
-            }}
-            inputContainerStyle={{ backgroundColor: "white" }}
+          <DropDown
+            categories={categories}
+            setCategory={setCategory}
+            category={category}
           />
         </View>
       </View>
