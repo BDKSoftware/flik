@@ -64,7 +64,7 @@ function AuthenticatedStack() {
         tabBarActiveBackgroundColor: "#F6F6F9",
         tabBarStyle: {
           width: "80%",
-          height: "10%",
+          height: "8%",
           alignSelf: "center",
           marginBottom: 20,
           borderRadius: 20,
@@ -90,7 +90,7 @@ function AuthenticatedStack() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Entypo name="home" size={30} color={color} />
+            <Entypo name="home" size={25} color={color} />
           ),
         }}
       />
@@ -100,7 +100,7 @@ function AuthenticatedStack() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-camera-outline" size={30} color={color} />
+            <Ionicons name="ios-camera-outline" size={25} color={color} />
           ),
         }}
       />
@@ -110,7 +110,7 @@ function AuthenticatedStack() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="storefront" size={30} color={color} />
+            <MaterialCommunityIcons name="storefront" size={25} color={color} />
           ),
         }}
       />

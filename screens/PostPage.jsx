@@ -23,6 +23,7 @@ import * as ImagePicker from "expo-image-picker";
 //Import modals
 import ErrorNFTModal from "../modals/ErrorNFTModal";
 import SuccessModal from "../modals/SuccessModal";
+import LoadingModal from "../modals/LoadingModal";
 
 const PostPage = ({ navigation }) => {
   // State values for input
@@ -33,6 +34,7 @@ const PostPage = ({ navigation }) => {
 
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(false);
+  const [showLoadingModal, setShowLoadingModal] = React.useState(false);
   const [categories, setCategories] = React.useState([]);
 
   const { isLoggedIn } = useAuth();
@@ -83,6 +85,7 @@ const PostPage = ({ navigation }) => {
   const mintNFT = async () => {
     const userToken = await AsyncStorage.getItem("@user_token");
     console.log("Minting NFT");
+    setShowLoadingModal(true);
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       this.setState({
@@ -112,11 +115,13 @@ const PostPage = ({ navigation }) => {
         .then((response) => response.json())
         .then((json) => {
           if (json.message) {
+            setShowLoadingModal(false);
             setShowErrorModal(true);
             console.log(json.message);
             console.log(json);
           } else {
             console.log(json);
+            setShowLoadingModal(false);
             setShowSuccessModal(true);
             setCategory("");
             setName("");
@@ -220,6 +225,7 @@ const PostPage = ({ navigation }) => {
         isShowing={showErrorModal}
         setIsShowing={setShowErrorModal}
       />
+      <LoadingModal isShowing={showLoadingModal} />
       <View style={styles.topbarContainer}>
         <TopBar />
       </View>

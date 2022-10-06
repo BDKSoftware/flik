@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import React from "react";
 
 import Modal from "react-native-modal";
 
 import { Octicons } from "@expo/vector-icons";
 
-const ErrorNFTModal = ({ isShowing, setIsShowing }) => {
+const ErrorNFTModal = ({ isShowing }) => {
   return (
     <Modal
       animationType="slide"
@@ -17,21 +17,10 @@ const ErrorNFTModal = ({ isShowing, setIsShowing }) => {
     >
       <View style={styles.container}>
         <View style={styles.modal}>
-          <View style={styles.titleContainer}>
-            <Octicons name="x-circle-fill" size={66} color="#B51919" />
-            <Text style={styles.titleText}>error</Text>
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>
-              {"We couldn't process your request :("}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setIsShowing(false)}
-          >
-            <Text style={styles.buttonText}>try again</Text>
-          </TouchableOpacity>
+          <ActivityIndicator size="large" color="#7700FF" />
+          <Text style={{ color: "#7700FF", fontSize: 20, fontWeight: "600" }}>
+            minting...
+          </Text>
         </View>
       </View>
     </Modal>
@@ -51,14 +40,16 @@ const styles = StyleSheet.create({
   },
 
   modal: {
-    width: 304,
-    height: 343,
+    width: 200,
+    height: 250,
     backgroundColor: "white",
     borderRadius: 20,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 10,
+    alignItems: "center",
+    justifyContent: "space-evenly",
   },
 
   titleContainer: {
